@@ -40,7 +40,7 @@ micButton.addEventListener('click', () => {
 const intro = `<h3> Welcome to KaabilBot™! </h3>
                <strong>KaabilBot</strong> is here to assist you with any query or task you have. True to its name, this bot is designed to handle a wide range of requests efficiently.
                 <h3>Made with ❤️ by <a href="https://github.com/Daamin909" target="_blank">Daamin Ashai</a></h3>
-                <h3>Under the guidance of <a href="https://github.com/MHammad4968">Sir Hammad</a></h3>`;
+                <h3>Under the guidance of <a href="https://github.com/MHammad4968" target="_blank">Sir Hammad</a></h3>`;
 addMessage(intro);
 
 

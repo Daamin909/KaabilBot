@@ -8,7 +8,6 @@ CORS(app)
 def chat():
     user_input = request.get_json()
     response = get_response(user_input['prompt'])
-    print(user_input['prompt']) 
     return jsonify({'response': response})
 
 if __name__ == '__main__':
