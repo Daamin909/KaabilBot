@@ -4,14 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KaabilBot</title>
-    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="assets/styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
+    <div class="logo-container">
+        <div class="logo-image"></div>
+        <div class="logo-text">
+            <h1>KaabilBot™</h1>
+        </div>
+    </div>
     <div class="chat-container">
-        <div class="chat-messages">
-            <div class="message bot-message"></div>
-            <div class="message user-message"></div>
+        <div class="chat-messages" id="chat-messages">
         </div>
         <div class="input-area">
             <input type="text" id="user-input" placeholder="Type your message...">
@@ -23,5 +27,6 @@
             </button>
         </div>
     </div>
+    <script src="assets/scripts/main.js"></script>
 </body>
 </html>

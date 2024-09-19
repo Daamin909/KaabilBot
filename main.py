@@ -7,7 +7,6 @@ import pyttsx3 as tts
 from dotenv import load_dotenv
 import speech_recognition as sr
 load_dotenv()
-
 client = OpenAI(api_key=os.getenv("API_KEY"))
 def get_response(prompt):
     response = client.chat.completions.create(
@@ -39,20 +38,20 @@ def recorder(filename, duration=5, sample_rate=44100, chunk=1024, channels=1):
     wf.setframerate(sample_rate)
     wf.writeframes(b''.join(frames))
     wf.close()
-
 def audio_to_text(filename):
     AUDIO_FILE = path.join(path.dirname(path.realpath(__file__)), filename)
     r = sr.Recognizer()
     with sr.AudioFile(AUDIO_FILE) as source:
         audio = r.record(source)  
     try:
-        global content
-        content= r.recognize_sphinx(audio)
+        content = r.recognize_google(audio)
+        return content
     except sr.UnknownValueError:
-        print("Sphinx could not understand audio")
+        print("Google Speech Recognition could not understand audio")
+        return None
     except sr.RequestError as e:
-        print("Sphinx error; {0}".format(e))
-
+        print("Could not request results from Google Speech Recognition service; {0}".format(e))
+        return None
 def recite(text):
     speaker = tts.init()
     speaker.say(text)
@@ -62,19 +61,19 @@ def recite(text):
     speaker.setProperty('voice', voices[1])
     speaker.runAndWait()
 
-text = input("Do you want to type or speak? T/S")
+'''text = input("Do you want to type or speak? T/S")
 recited = input("Do you want to recite the response? Y/N")
 if text.lower() == "t":
     prompt = input("Enter your prompt: ")
-    response = get_response(prompt)
+    #response = get_response(prompt)
 elif text.lower() == "s":
-    recorder("audio.wav", duration=input("Enter the duration of the recording in seconds: "))
-    audio_to_text("audio.wav")
-    response = get_response(content)
+    recorder("audio.wav", duration=int(input("Enter the duration of the recording in seconds: ")))
+    #response = get_response(audio_to_text("audio.wav"))
+    response = audio_to_text("audio.wav")
 else :
     print("Invalid input")
 
 if recited.lower() == "y":
     recite(response)
 elif recited.lower() == "n":
-    print(response)
+    print("response")'''
