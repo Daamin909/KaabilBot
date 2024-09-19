@@ -6,6 +6,7 @@ import pyaudio
 import pyttsx3 as tts
 from dotenv import load_dotenv
 import speech_recognition as sr
+import markdown2 as m2
 load_dotenv()
 client = OpenAI(api_key=os.getenv("API_KEY"))
 def get_response(prompt):
@@ -16,7 +17,7 @@ def get_response(prompt):
             {"role": "user", "content": prompt}
         ]
     )
-    return response.choices[0].message.content
+    return m2.markdown(response.choices[0].message.content)
 def recorder(filename, duration=5, sample_rate=44100, chunk=1024, channels=1):
     audio_format = pyaudio.paInt16
     p = pyaudio.PyAudio()
