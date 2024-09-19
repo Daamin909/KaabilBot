@@ -2,6 +2,9 @@ const chatMessages = document.getElementById('chat-messages');
 const userInput = document.getElementById('user-input');
 const sendButton = document.getElementById('send-button');
 const micButton = document.getElementById('mic-button');
+const stopIcon = document.getElementById('stop-icon');
+const startIcon = document.getElementById('start-icon');
+stopIcon.style.display = 'none';
 document.addEventListener('DOMContentLoaded', () => {
     const loading_screen = document.getElementById('loading-screen');
     loading_screen.style.display = 'none';
@@ -34,13 +37,8 @@ userInput.addEventListener('keypress', (e) => {
     }
 });
 
-micButton.addEventListener('click', () => {
-    startRecording();
-});
 const intro = `<h3> Welcome to KaabilBot™! </h3>
-               <strong>KaabilBot</strong> is here to assist you with any query or task you have. True to its name, this bot is designed to handle a wide range of requests efficiently.
-                <h3>Made with ❤️ by <a href="https://github.com/Daamin909" target="_blank">Daamin Ashai</a></h3>
-                <h3>Under the guidance of <a href="https://github.com/MHammad4968" target="_blank">Sir Hammad</a></h3>`;
+               <strong>KaabilBot</strong> is here to assist you with any query or task you have. True to its name, this bot is designed to handle a wide range of requests efficiently.`;
 addMessage(intro);
 
 
@@ -95,4 +93,87 @@ function showErrorMessage(message) {
     setTimeout(() => {
         messageBox.remove();
     }, 3000);
+}
+
+let mediaRecorder;
+let audioChunks = [];
+let recording = false;
+
+micButton.addEventListener('click', () => {
+    if (recording) {
+        stopRecording();
+    } else {
+        startRecording();
+    }
+});
+
+function checkPerms() {
+    navigator.permissions.query({ name: 'microphone' })
+    .then(permissionStatus => {
+        if (permissionStatus.state === 'granted') {
+            startRecording();
+        } else if (permissionStatus.state === 'prompt') {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                stream.getTracks().forEach(track => track.stop()); 
+                startRecording();
+            })
+            .catch(error => {
+                showErrorMessage('Microphone access is denied.');
+            });
+        } else {
+            showErrorMessage('Microphone access is denied.');
+        }
+    })
+    .catch(() => {
+        showErrorMessage('Error 404. Please try again later.');
+        navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            stream.getTracks().forEach(track => track.stop());
+            startRecording();
+        })
+        .catch(error => {
+            showErrorMessage('Error accessing the microphone. Please check permissions.');
+        });
+    });
+}
+
+function startRecording() {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(stream => {
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = (event) => {
+            audioChunks.push(event.data);
+        };
+        mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'recording.wav');
+            fetch('http://127.0.0.1:5000/speech', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                //data is the response from the API
+            })
+            .catch(error => {
+                showErrorMessage('Error 404. Please try again later.');
+            });
+            audioChunks = []; 
+        };
+        mediaRecorder.start();
+        recording = true;
+        stopIcon.style.display = 'block';
+        startIcon.style.display = 'none';
+    })
+    .catch(error => {
+        showErrorMessage('Error 504. Please check your microphone');
+    });
+}
+function stopRecording() {
+    recording = false;
+    mediaRecorder.stop();
+    stopIcon.style.display = 'none';
+    startIcon.style.display = 'block';
 }
