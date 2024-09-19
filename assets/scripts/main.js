@@ -4,9 +4,9 @@ const sendButton = document.getElementById('send-button');
 const micButton = document.getElementById('mic-button');
 const stopIcon = document.getElementById('stop-icon');
 const startIcon = document.getElementById('start-icon');
+const loading_screen = document.getElementById('loading-screen');
 stopIcon.style.display = 'none';
 document.addEventListener('DOMContentLoaded', () => {
-    const loading_screen = document.getElementById('loading-screen');
     loading_screen.style.display = 'none';
 });
 function addMessage(content, userCheck = false) {
@@ -146,6 +146,7 @@ function startRecording() {
             audioChunks.push(event.data);
         };
         mediaRecorder.onstop = () => {
+            loading_screen.style.display = 'flex';
             const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
             const formData = new FormData();
             formData.append('audio', audioBlob, 'recording.wav');
@@ -155,7 +156,12 @@ function startRecording() {
             })
             .then(response => response.json())
             .then(data => {
-                //data is the response from the API
+                const unformmated_content=data.response;
+                const formatted_content=`${unformmated_content}`;
+                const userMessage =  data.requestPrompt;
+                addMessage(userMessage, true);
+                addMessage(formatted_content);
+                loading_screen.style.display = 'none';
             })
             .catch(error => {
                 showErrorMessage('Error 404. Please try again later.');

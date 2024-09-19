@@ -14,11 +14,12 @@ def chat():
 def upload_audio():
     if 'audio' not in request.files:
         print ("shit hasn't happened")
-        return jsonify({'error': 'No audio file provided'}), 400
+        return jsonify({'error': 'No audio file provided'})
     audio_file = request.files['audio']
     audio_file.save('audio.wav')
-    print("shit has happened")
-    return jsonify({'message': 'File successfully uploaded'}), 200
+    userContent=audio_to_text('audio.wav')
+    botContent=get_response(userContent)
+    return jsonify({'response': botContent, 'requestPrompt': userContent})
 
 if __name__ == '__main__':
     app.run(debug=True)
