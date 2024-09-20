@@ -45,7 +45,7 @@ def audio_to_text(filename):
     with sr.AudioFile(AUDIO_FILE) as source:
         audio = r.record(source)  
     try:
-        content = r.recognize_google(audio)
+        content = r.recognize_sphinx(audio)
         return content
     except sr.UnknownValueError:
         print("Google Speech Recognition could not understand audio")

@@ -147,9 +147,10 @@ function startRecording() {
         };
         mediaRecorder.onstop = () => {
             loading_screen.style.display = 'flex';
-            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            userInput.disabled = true;
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
             const formData = new FormData();
-            formData.append('audio', audioBlob, 'recording.wav');
+            formData.append('audio', audioBlob, 'recording.wbm');
             fetch('http://127.0.0.1:5000/speech', {
                 method: 'POST',
                 body: formData,
@@ -162,9 +163,11 @@ function startRecording() {
                 addMessage(userMessage, true);
                 addMessage(formatted_content);
                 loading_screen.style.display = 'none';
+                userInput.disabled = false;
             })
             .catch(error => {
                 showErrorMessage('Error 404. Please try again later.');
+                userInput.disabled = false;
             });
             audioChunks = []; 
         };
@@ -175,6 +178,7 @@ function startRecording() {
     })
     .catch(error => {
         showErrorMessage('Error 504. Please check your microphone');
+        console.log
     });
 }
 function stopRecording() {
