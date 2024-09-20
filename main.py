@@ -62,6 +62,7 @@ def recite(text):
     speaker.setProperty('voice', voices[1])
     speaker.runAndWait()
 
+
 '''text = input("Do you want to type or speak? T/S")
 recited = input("Do you want to recite the response? Y/N")
 if text.lower() == "t":
