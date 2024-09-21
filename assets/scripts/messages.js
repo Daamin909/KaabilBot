@@ -1,4 +1,5 @@
 checkFilePaths();
+var chatHistory = [], numberOfMessages = [];
 function checkFilePaths(){
     fetch('http://127.0.0.1:5000/check', {
         method: 'POST'
@@ -11,7 +12,11 @@ function checkFilePaths(){
         if (!data.audio){
             createFile('audio');
         }
+        if (!data.number){
+            createFile('number');
+        }
         getValue();
+        getNumber();
     })
     .catch((error) => {
         showErrorMessage('Error 504. Please try again later.');
@@ -47,8 +52,7 @@ function getValue(){
             showErrorMessage('Error 504. Please try again later.');
         }
         else{
-            var chatHistory = data.json
-            console.log(chatHistory)
+            chatHistory = chatHistory.concat(data.json);
         }
     })
     .catch((error) => {
@@ -56,3 +60,31 @@ function getValue(){
         console.log(error);
     });
 }
+function getNumber(){
+    fetch('http://127.0.0.1:5000/rean', {
+        method: 'POST',
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.json==false){
+            showErrorMessage('Error 504. Please try again later.');
+        }
+        else{
+            numberOfMessages = numberOfMessages.concat(data.json);
+        }
+    })
+    .catch((error) => {
+        showErrorMessage('Error 504. Please try again later.');
+        console.log(error);
+    });
+}
+const format = {
+                "id": 1,
+                "user": true,
+                "bot": false,
+                "content": "",
+                "time": new Date().toLocaleString()
+                }
+const numberFormat = {
+                "number_of_messages": 0
+                }

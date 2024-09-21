@@ -27,19 +27,21 @@ def speech():
 
 @app.route('/check', methods=['POST'])
 def check():
-    return jsonify({'messages': m.messagesExist(), 'audio': m.audioExist()})
+    return jsonify({'messages': m.messagesExist(), 'audio': m.audioExist(), 'number': m.numberExist()})
 
 
 @app.route('/createFiles', methods=['POST'])
 def createFiles():
     filetype = request.get_json()
-    print(f'{filetype} skibidi')
     try:
         if filetype['file'] == 'messages':
             m.createMessageFilePath()
             return jsonify({'bool': True})
         elif filetype['file'] == 'audio':
             m.createAudioFilePath()
+            return jsonify({'bool': True})
+        elif filetype['file'] == 'number':
+            m.createNumberFilePath()
             return jsonify({'bool': True})
     except:
         return jsonify({'bool', False})
@@ -52,5 +54,12 @@ def read():
     else:
         return jsonify({'json': f'{chatHistory}'})
     
+@app.route('/rean', methods=['POST'])
+def rean():
+    chatHistory = m.readNumberFile()
+    if (chatHistory==False):
+        return {'json', 'error'}
+    else:
+        return jsonify({'json': f'{chatHistory}'})
 if __name__ == '__main__':
     app.run(debug=True)
