@@ -7,6 +7,7 @@ import pyttsx3 as tts
 from dotenv import load_dotenv
 import speech_recognition as sr
 import markdown2 as m2
+from messages import homePath, audioFilePath
 load_dotenv()
 client = OpenAI(api_key=os.getenv("API_KEY"))
 def get_response(prompt):
@@ -53,13 +54,12 @@ def audio_to_text(filename):
     except sr.RequestError as e:
         print("Could not request results from Google Speech Recognition service; {0}".format(e))
         return None
-def recite(text):
+def recite(text, filename="/audio.wav"):
     speaker = tts.init()
-    speaker.say(text)
-    newVolume=200
-    speaker.setProperty('volume', newVolume)
+    speaker.setProperty('volume', 200)
     voices = speaker.getProperty('voices')
     speaker.setProperty('voice', voices[1])
+    speaker.save_to_file(text, homePath+audioFilePath+filename)
     speaker.runAndWait()
 
 
