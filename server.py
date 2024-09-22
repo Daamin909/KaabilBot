@@ -14,16 +14,18 @@ def chat():
 @app.route('/speech', methods=['POST'])
 def speech():
     if 'audio' not in request.files:
-        return jsonify({'error': 'No audio file provided'})
+        return jsonify({'error': True})
     audio_file = request.files['audio']
     try:
-        audio_file.save(m.homePath+m.audioFilePath+'/audio.wav')
-        userContent = audio_to_text('audio.wav')
+        audio_file.save(m.homePath+m.audioFilePath+'/audio.webm')
+        userContent = audio_to_text('audio.webm')
+        if userContent == False:
+            return jsonify({'error': True})
         botContent = get_response(userContent)
         return jsonify({'response': botContent, 'requestPrompt': userContent})
 
     except Exception as e:
-        return jsonify({'error': f'Error processing audio: {str(e)}'})
+        return jsonify({'error': True})
 
 @app.route('/check', methods=['POST'])
 def check():

@@ -2,13 +2,16 @@ from openai import OpenAI
 import os
 import wave
 import pyaudio
-import pyttsx3 as tts
 from dotenv import load_dotenv
-import speech_recognition as sr
 import markdown2 as m2
-from messages import homePath, audioFilePath, numberFilePath
+from messages import homePath, audioFilePath
+import os
+from groq import Groq
+
+clientSTT = Groq(api_key=f'{os.getenv("API_KEY_STT")}')   
 load_dotenv()
 client = OpenAI(api_key=os.getenv("API_KEY"))
+
 def get_response(prompt):
     response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -39,29 +42,19 @@ def recorder(filename, duration=5, sample_rate=44100, chunk=1024, channels=1):
     wf.setframerate(sample_rate)
     wf.writeframes(b''.join(frames))
     wf.close()
-def audio_to_text(filename):
+def audio_to_text(filename="audio.webm"):
     AUDIO_FILE = homePath+audioFilePath+"/"+filename
-    print (AUDIO_FILE)
-    r = sr.Recognizer()
-    with sr.AudioFile(AUDIO_FILE) as source:
-        audio = r.record(source)  
     try:
-        content = r.recognize_sphinx(audio)
-        print("Sphinx thinks you said: " + content)
-        return content
-    except sr.UnknownValueError:
-        print("Google Speech Recognition could not understand audio")
-        return None
-    except sr.RequestError as e:
-        print("Could not request results from Google Speech Recognition service; {0}".format(e))
-        return None
-def recite(text):
-    speaker = tts.init()
-    speaker.setProperty('volume', 200)
-    voices = speaker.getProperty('voices')
-    speaker.setProperty('voice', voices[1])
-    speaker.save_to_file(text, homePath+audioFilePath+"/readaloud.wav")
-    speaker.runAndWait()
+        with open(AUDIO_FILE, "rb") as file:
+            transcription = clientSTT.audio.transcriptions.create(
+                file=(filename, file.read()),
+                model="whisper-large-v3",
+                response_format="verbose_json",
+            )
+        return transcription.text
+    except:
+        return False
+    
 
 
 '''text = input("Do you want to type or speak? T/S")
