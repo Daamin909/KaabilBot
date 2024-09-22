@@ -19,7 +19,7 @@ setTimeout(() => {
             window.speechSynthesis.speak(speech);
         });
     });
-}, 3000);
+}, 1000);
 var chatHistory = [];
 var numberOfMessages = 0;
 function writeToMessages(format){
