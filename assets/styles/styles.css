@@ -88,9 +88,33 @@ a {
 .message {
     margin-bottom: 15px;
     padding: 12px;
+    padding-bottom: 2px;
     border-radius: 8px;
+    position: relative;
     max-width: 40%;
     word-wrap: break-word;
+}
+
+.read-aloud-btn {
+    position: absolute;
+    bottom: -12px;
+    right: -10px;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1px; 
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+}
+
+.read-aloud-btn i {
+    font-size: 13px !important;
+
+}
+
+.read-aloud-btn:hover i {
+    color: #8d8d8d;
 }
 
 .user-message {

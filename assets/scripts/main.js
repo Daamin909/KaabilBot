@@ -6,7 +6,20 @@ const stopIcon = document.getElementById('stop-icon');
 const startIcon = document.getElementById('start-icon');
 const loading_screen = document.getElementById('loading-screen');
 stopIcon.style.display = 'none';
-
+setTimeout(() => {
+    document.querySelectorAll('.read-aloud-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            window.speechSynthesis.cancel();
+            const messageId = this.getAttribute('data-message-id');
+            const messageContent = document.querySelector(`.message[data-message-id="${messageId}"]`).textContent;
+            const speech = new SpeechSynthesisUtterance(messageContent);
+            speech.volume = 100;
+            speech.rate = 1;
+            speech.pitch = 1;
+            window.speechSynthesis.speak(speech);
+        });
+    });
+}, 3000);
 var chatHistory = [];
 var numberOfMessages = 0;
 function writeToMessages(format){
@@ -84,6 +97,17 @@ function addMessage(content, userCheck = false) {
     messageDiv.appendChild(contentDiv);
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+    const readAloudButton = document.createElement('button');
+    readAloudButton.classList.add('read-aloud-btn');
+    readAloudButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+    contentDiv.appendChild(readAloudButton);
+    const messages = document.querySelectorAll('.message');
+    messages.forEach((message, index) => {
+        const messageId = index + 1; 
+        message.setAttribute('data-message-id', messageId);
+        const button = message.querySelector('.read-aloud-btn');
+        button.setAttribute('data-message-id', messageId);
+    });
 }
 function addIntroMessage(content) {
     const format = {
@@ -106,6 +130,17 @@ function addIntroMessage(content) {
     messageDiv.appendChild(contentDiv);
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+    const readAloudButton = document.createElement('button');
+    readAloudButton.classList.add('read-aloud-btn');
+    readAloudButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+    contentDiv.appendChild(readAloudButton);
+    const messages = document.querySelectorAll('.message');
+    messages.forEach((message, index) => {
+        const messageId = index + 1; 
+        message.setAttribute('data-message-id', messageId);
+        const button = message.querySelector('.read-aloud-btn');
+        button.setAttribute('data-message-id', messageId);
+    });
 }
 function addOldMessages(content, userCheck = false) {
     const messageDiv = document.createElement('div');
@@ -117,6 +152,17 @@ function addOldMessages(content, userCheck = false) {
     messageDiv.appendChild(contentDiv);
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+    const readAloudButton = document.createElement('button');
+    readAloudButton.classList.add('read-aloud-btn');
+    readAloudButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+    contentDiv.appendChild(readAloudButton);
+    const messages = document.querySelectorAll('.message');
+    messages.forEach((message, index) => {
+        const messageId = index + 1; 
+        message.setAttribute('data-message-id', messageId);
+        const button = message.querySelector('.read-aloud-btn');
+        button.setAttribute('data-message-id', messageId);
+    });
 }
 function sendMessage() {
     const message = userInput.value.trim();

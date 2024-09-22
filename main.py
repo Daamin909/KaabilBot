@@ -55,12 +55,12 @@ def audio_to_text(filename):
     except sr.RequestError as e:
         print("Could not request results from Google Speech Recognition service; {0}".format(e))
         return None
-def recite(text, filename="/audio.wav"):
+def recite(text):
     speaker = tts.init()
     speaker.setProperty('volume', 200)
     voices = speaker.getProperty('voices')
     speaker.setProperty('voice', voices[1])
-    speaker.save_to_file(text, homePath+audioFilePath+filename)
+    speaker.save_to_file(text, homePath+audioFilePath+"/readaloud.wav")
     speaker.runAndWait()
 
 
