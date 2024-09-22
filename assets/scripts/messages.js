@@ -1,3 +1,5 @@
+userInput.disabled = true;
+loading_screen.style.display = 'flex';
 checkFilePaths();
 function checkFilePaths(){
     fetch('http://127.0.0.1:5000/check', {
@@ -5,11 +7,9 @@ function checkFilePaths(){
     })
     .then(response => response.json())
     .then(data => {
+        var x = data
         if (!data.messages){
             createFile('messages');
-        }
-        else{
-            getValue();
         }
         if (!data.audio){
             createFile('audio');
@@ -17,13 +17,15 @@ function checkFilePaths(){
         if (!data.number){
             createFile('number')
         }
-        else{
-            getNumber();
-        }
+    })
+    .then(() => {
+        getValue();
+    })
+    .then(() => {
+
     })
     .catch((error) => {
         showErrorMessage('Error 504. Please try again later.');
-        console.log(error);
     });
 }
 function createFile(type){
@@ -37,21 +39,11 @@ function createFile(type){
     .then(response => response.json())
     .then(data => {
         if (!data.bool){
-            console.log('Error creating file.');
             showErrorMessage('Error 504. Please try again later.');
-        }
-        else{
-            if (type == 'messages'){
-                getValue();
-            }
-            else if (type == 'number'){
-                getNumber();
-            }
         }
     })
     .catch((error) => {
         showErrorMessage('Error 504. Please try again later.');
-        console.log(error);
     });
 }
 function getValue(){
@@ -70,39 +62,34 @@ function getValue(){
             }
         }
     })
-    .catch((error) => {
-        showErrorMessage('Error 504. Please try again later.');
-        console.log(error);
-    });
-}
-function getNumber(){
-    fetch('http://127.0.0.1:5000/rean', {
-        method: 'POST',
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.json==false){
+    .then(() => {
+        fetch('http://127.0.0.1:5000/rean', {
+            method: 'POST',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.json==false){
+                showErrorMessage('Error 504. Please try again later.');
+            }
+            else{
+                numberOfMessages = JSON.parse(data.json).number_of_messages;
+            }
+        })
+        .catch((error) => {
             showErrorMessage('Error 504. Please try again later.');
-        }
-        else{
-            numberOfMessages = JSON.parse(data.json).number_of_messages;
-            loadOldMessages();
-        }
+        });
+    })
+    .then(() => {
+        loadOldMessages();
     })
     .catch((error) => {
         showErrorMessage('Error 504. Please try again later.');
-        console.log(error);
     });
 }
+
 function checkEmpty(){
     if (chatHistory.length === 0){
         return true;
-    }
-    else if (chatHistory.length === 1){
-        const firstMessage = (chatHistory[0].empty);
-        if (firstMessage === true){
-            return true;
-        }
     }
     else{
         return false;
@@ -112,30 +99,40 @@ function loadOldMessages(){
     if(checkEmpty()){
         const intro = `<h3> Welcome to KaabilBot™! </h3>
                <strong>KaabilBot</strong> is here to assist you with any query or task you have. True to its name, this bot is designed to handle a wide range of requests efficiently.`;
-        addMessage(intro);
+        addIntroMessage(intro);
+    }
+    else if(chatHistory.length === 1){
+        const message = chatHistory[0].special;
+        if (message){
+            loadMsgs();
+            return;
+        }   
     }
     else{
-        chatHistory.forEach(message => {
-            if (message.id === undefined || message.id === null || message.bot === undefined || message.bot === null || message.content === undefined || message.content === null || message.user === undefined || message.user === null || message.time === undefined || message.time === null)   {
-                console.log('Error loading messages.');
-                return;
-            }
-            if (message.bot === true){
-                addOldMessages(message.content);
-            }
-            else if (message.bot === false){
-                addOldMessages(message.content, true);
-            }
-        });
-        writeToNumber();
+        loadMsgs();
     }
 }
-window.addEventListener('beforeunload', function(event) {
-    if (numberOfMessages % 2 === 0){
-        numberOfMessages--;
-        chatHistory.pop();
-        writeToNumber();
-        removeLatestMsg();
-        changeMessages();
-    }
-});
+function loadMsgs(){
+    chatHistory.forEach(message => {
+        if (message.id === undefined || message.id === null || message.bot === undefined || message.bot === null || message.content === undefined || message.content === null || message.user === undefined || message.user === null || message.time === undefined || message.time === null)   {
+            return;
+        }
+        if (message.bot === true){
+            addOldMessages(message.content);
+        }
+        else if (message.bot === false){
+            addOldMessages(message.content, true);
+        }
+    });
+    checkIncomplete();
+    loading_screen.style.display = 'none';
+    userInput.disabled = false;
+}
+
+function checkIncomplete(){
+    const messages = document.getElementsByClassName('message');
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage.classList.contains('user-message')) {
+        get_response(lastMessage.textContent);
+    } 
+}

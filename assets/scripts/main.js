@@ -9,7 +9,6 @@ stopIcon.style.display = 'none';
 
 var chatHistory = [];
 var numberOfMessages = 0;
-
 function writeToMessages(format){
     chatHistory.push(format);
     fetch('http://127.0.0.1:5000/write', {
@@ -22,13 +21,11 @@ function writeToMessages(format){
     .then(response => response.json())
     .then(data => {
         if (!data.bool){
-            console.log('Error creating file.');
             showErrorMessage('Error 504. Please try again later.');
         }
     })
     .catch((error) => {
         showErrorMessage('Error 504. Please try again later.');
-        console.log(error);
     });
 }
 function changeMessages(){
@@ -42,13 +39,11 @@ function changeMessages(){
     .then(response => response.json())
     .then(data => {
         if (!data.bool){
-            console.log('Error creating file.');
             showErrorMessage('Error 504. Please try again later.');
         }
     })
     .catch((error) => {
         showErrorMessage('Error 504. Please try again later.');
-        console.log(error);
     });
 }
 function writeToNumber(){
@@ -62,13 +57,11 @@ function writeToNumber(){
     .then(response => response.json())
     .then(data => {
         if (!data.bool){
-            console.log('Error creating file.');
             showErrorMessage('Error 504. Please try again later.');
         }
     })
     .catch((error) => {
         showErrorMessage('Error 504. Please try again later.');
-        console.log(error);
     });
 }
 function addMessage(content, userCheck = false) {
@@ -92,6 +85,28 @@ function addMessage(content, userCheck = false) {
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
+function addIntroMessage(content) {
+    const format = {
+        "id": 1,
+        "user": false,
+        "bot": true,
+        "special": true,
+        "content": content,
+        "time": new Date().toLocaleString()
+    }
+    numberOfMessages = 1;
+    writeToMessages(format);
+    writeToNumber();
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message');
+    messageDiv.classList.add('bot-message');
+    const contentDiv = document.createElement('div');
+    contentDiv.classList.add('message-content');
+    contentDiv.innerHTML = content;
+    messageDiv.appendChild(contentDiv);
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 function addOldMessages(content, userCheck = false) {
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message');
@@ -103,10 +118,6 @@ function addOldMessages(content, userCheck = false) {
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    loading_screen.style.display = 'none';
-});
 function sendMessage() {
     const message = userInput.value.trim();
     if (message) {
@@ -123,7 +134,6 @@ userInput.addEventListener('keypress', (e) => {
 });
 function get_response(message) {
     userInput.disabled = true;
-    const loading_screen = document.getElementById('loading-screen');
     loading_screen.style.display = 'flex';
     fetch('http://127.0.0.1:5000/chat', {
         method: 'POST',
@@ -246,7 +256,6 @@ function startRecording() {
             })
             .catch(error => {
                 showErrorMessage('Error 404. Please try again later.');
-                console.log(error);
                 userInput.disabled = false;
                 loading_screen.style.display = 'none';
             });
@@ -259,7 +268,6 @@ function startRecording() {
     })
     .catch(error => {
         showErrorMessage('Microphone access is denied.');
-        console.log(error);
     });
 }
 

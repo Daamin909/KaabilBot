@@ -1,6 +1,5 @@
 from openai import OpenAI
 import os
-from os import path
 import wave
 import pyaudio
 import pyttsx3 as tts

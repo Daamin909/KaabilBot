@@ -29,7 +29,6 @@ def speech():
 def check():
     return jsonify({'messages': m.messagesExist(), 'audio': m.audioExist(), 'number': m.numberExist()})
 
-
 @app.route('/createFiles', methods=['POST'])
 def createFiles():
     filetype = request.get_json()
@@ -62,7 +61,6 @@ def rean():
     else:
         return jsonify({'json': f'{chatHistory}'})
     
-
 @app.route('/writn', methods=['POST'])
 def writn():
     data = request.get_json()
@@ -71,7 +69,6 @@ def writn():
     else:
         return jsonify({'bool': False})
     
-
 @app.route('/write', methods=['POST'])
 def write():
     data = request.get_json()
@@ -79,5 +76,6 @@ def write():
         return jsonify({'bool': True})
     else:
         return jsonify({'bool': False})
+
 if __name__ == '__main__':
     app.run(debug=True)
