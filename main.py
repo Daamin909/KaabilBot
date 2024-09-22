@@ -7,7 +7,7 @@ import pyttsx3 as tts
 from dotenv import load_dotenv
 import speech_recognition as sr
 import markdown2 as m2
-from messages import homePath, audioFilePath
+from messages import homePath, audioFilePath, numberFilePath
 load_dotenv()
 client = OpenAI(api_key=os.getenv("API_KEY"))
 def get_response(prompt):
@@ -41,12 +41,14 @@ def recorder(filename, duration=5, sample_rate=44100, chunk=1024, channels=1):
     wf.writeframes(b''.join(frames))
     wf.close()
 def audio_to_text(filename):
-    AUDIO_FILE = path.join(path.dirname(path.realpath(__file__)), filename)
+    AUDIO_FILE = homePath+audioFilePath+"/"+filename
+    print (AUDIO_FILE)
     r = sr.Recognizer()
     with sr.AudioFile(AUDIO_FILE) as source:
         audio = r.record(source)  
     try:
         content = r.recognize_sphinx(audio)
+        print("Sphinx thinks you said: " + content)
         return content
     except sr.UnknownValueError:
         print("Google Speech Recognition could not understand audio")

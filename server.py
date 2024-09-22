@@ -17,7 +17,7 @@ def speech():
         return jsonify({'error': 'No audio file provided'})
     audio_file = request.files['audio']
     try:
-        audio_file.save(m.homePath+m.audioFilePath+'audio.wav')
+        audio_file.save(m.homePath+m.audioFilePath+'/audio.wav')
         userContent = audio_to_text('audio.wav')
         botContent = get_response(userContent)
         return jsonify({'response': botContent, 'requestPrompt': userContent})
@@ -50,7 +50,7 @@ def createFiles():
 def read():
     chatHistory = m.readFile()
     if (chatHistory==False):
-        return {'json', 'error'}
+        return jsonify({'json', 'error'})
     else:
         return jsonify({'json': f'{chatHistory}'})
     
@@ -61,5 +61,23 @@ def rean():
         return {'json', 'error'}
     else:
         return jsonify({'json': f'{chatHistory}'})
+    
+
+@app.route('/writn', methods=['POST'])
+def writn():
+    data = request.get_json()
+    if m.writeNumber(data['number_of_messages']):
+        return jsonify({'bool': True})
+    else:
+        return jsonify({'bool': False})
+    
+
+@app.route('/write', methods=['POST'])
+def write():
+    data = request.get_json()
+    if m.write(data):
+        return jsonify({'bool': True})
+    else:
+        return jsonify({'bool': False})
 if __name__ == '__main__':
     app.run(debug=True)

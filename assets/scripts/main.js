@@ -6,10 +6,93 @@ const stopIcon = document.getElementById('stop-icon');
 const startIcon = document.getElementById('start-icon');
 const loading_screen = document.getElementById('loading-screen');
 stopIcon.style.display = 'none';
-document.addEventListener('DOMContentLoaded', () => {
-    loading_screen.style.display = 'none';
-});
+
+var chatHistory = [];
+var numberOfMessages = 0;
+
+function writeToMessages(format){
+    chatHistory.push(format);
+    fetch('http://127.0.0.1:5000/write', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(chatHistory)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.bool){
+            console.log('Error creating file.');
+            showErrorMessage('Error 504. Please try again later.');
+        }
+    })
+    .catch((error) => {
+        showErrorMessage('Error 504. Please try again later.');
+        console.log(error);
+    });
+}
+function changeMessages(){
+    fetch('http://127.0.0.1:5000/write', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(chatHistory)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.bool){
+            console.log('Error creating file.');
+            showErrorMessage('Error 504. Please try again later.');
+        }
+    })
+    .catch((error) => {
+        showErrorMessage('Error 504. Please try again later.');
+        console.log(error);
+    });
+}
+function writeToNumber(){
+    fetch('http://127.0.0.1:5000/writn', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ number_of_messages: numberOfMessages })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.bool){
+            console.log('Error creating file.');
+            showErrorMessage('Error 504. Please try again later.');
+        }
+    })
+    .catch((error) => {
+        showErrorMessage('Error 504. Please try again later.');
+        console.log(error);
+    });
+}
 function addMessage(content, userCheck = false) {
+    const format = {
+        "id": numberOfMessages+1,
+        "user": userCheck,
+        "bot": !userCheck,
+        "content": content,
+        "time": new Date().toLocaleString()
+    }
+    numberOfMessages += 1;
+    writeToMessages(format);
+    writeToNumber();
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message');
+    messageDiv.classList.add(userCheck ? 'user-message' : 'bot-message');
+    const contentDiv = document.createElement('div');
+    contentDiv.classList.add('message-content');
+    contentDiv.innerHTML = content;
+    messageDiv.appendChild(contentDiv);
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+function addOldMessages(content, userCheck = false) {
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message');
     messageDiv.classList.add(userCheck ? 'user-message' : 'bot-message');
@@ -21,6 +104,9 @@ function addMessage(content, userCheck = false) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    loading_screen.style.display = 'none';
+});
 function sendMessage() {
     const message = userInput.value.trim();
     if (message) {
@@ -29,19 +115,12 @@ function sendMessage() {
         get_response(message);
     }
 }
-
 sendButton.addEventListener('click', sendMessage);
 userInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         sendMessage();
     }
 });
-
-const intro = `<h3> Welcome to KaabilBot™! </h3>
-               <strong>KaabilBot</strong> is here to assist you with any query or task you have. True to its name, this bot is designed to handle a wide range of requests efficiently.`;
-addMessage(intro);
-
-
 function get_response(message) {
     userInput.disabled = true;
     const loading_screen = document.getElementById('loading-screen');
@@ -68,12 +147,10 @@ function get_response(message) {
         userInput.disabled = false;
     });
 }
-
 function removeLatestMsg() {
     const messages = document.getElementsByClassName('message');
     messages[messages.length - 1].remove();
 }
-
 function showErrorMessage(message) {
     const messageBox = document.createElement("div");
     messageBox.textContent = message;
@@ -206,7 +283,8 @@ function stopRecording() {
     stopIcon.style.display = 'none';
     startIcon.style.display = 'block';
 }
-function audioBufferToWav(buffer, opt) {
+{
+    function audioBufferToWav(buffer, opt) {
     opt = opt || {};
     var numChannels = buffer.numberOfChannels;
     var sampleRate = buffer.sampleRate;
@@ -277,4 +355,5 @@ function writeString(view, offset, string) {
     for (var i = 0; i < string.length; i++) {
         view.setUint8(offset + i, string.charCodeAt(i));
     }
+}
 }

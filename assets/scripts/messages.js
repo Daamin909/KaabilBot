@@ -1,5 +1,4 @@
 checkFilePaths();
-var chatHistory = [], numberOfMessages = [];
 function checkFilePaths(){
     fetch('http://127.0.0.1:5000/check', {
         method: 'POST'
@@ -9,14 +8,18 @@ function checkFilePaths(){
         if (!data.messages){
             createFile('messages');
         }
+        else{
+            getValue();
+        }
         if (!data.audio){
             createFile('audio');
         }
         if (!data.number){
-            createFile('number');
+            createFile('number')
         }
-        getValue();
-        getNumber();
+        else{
+            getNumber();
+        }
     })
     .catch((error) => {
         showErrorMessage('Error 504. Please try again later.');
@@ -34,7 +37,16 @@ function createFile(type){
     .then(response => response.json())
     .then(data => {
         if (!data.bool){
+            console.log('Error creating file.');
             showErrorMessage('Error 504. Please try again later.');
+        }
+        else{
+            if (type == 'messages'){
+                getValue();
+            }
+            else if (type == 'number'){
+                getNumber();
+            }
         }
     })
     .catch((error) => {
@@ -51,8 +63,11 @@ function getValue(){
         if (data.json==false){
             showErrorMessage('Error 504. Please try again later.');
         }
-        else{
-            chatHistory = chatHistory.concat(data.json);
+        else {
+            chatHistory = JSON.parse(data.json);
+            if (chatHistory.empty === true){
+                chatHistory = [];
+            }
         }
     })
     .catch((error) => {
@@ -70,7 +85,8 @@ function getNumber(){
             showErrorMessage('Error 504. Please try again later.');
         }
         else{
-            numberOfMessages = numberOfMessages.concat(data.json);
+            numberOfMessages = JSON.parse(data.json).number_of_messages;
+            loadOldMessages();
         }
     })
     .catch((error) => {
@@ -78,13 +94,48 @@ function getNumber(){
         console.log(error);
     });
 }
-const format = {
-                "id": 1,
-                "user": true,
-                "bot": false,
-                "content": "",
-                "time": new Date().toLocaleString()
-                }
-const numberFormat = {
-                "number_of_messages": 0
-                }
+function checkEmpty(){
+    if (chatHistory.length === 0){
+        return true;
+    }
+    else if (chatHistory.length === 1){
+        const firstMessage = (chatHistory[0].empty);
+        if (firstMessage === true){
+            return true;
+        }
+    }
+    else{
+        return false;
+    }
+}
+function loadOldMessages(){
+    if(checkEmpty()){
+        const intro = `<h3> Welcome to KaabilBot™! </h3>
+               <strong>KaabilBot</strong> is here to assist you with any query or task you have. True to its name, this bot is designed to handle a wide range of requests efficiently.`;
+        addMessage(intro);
+    }
+    else{
+        chatHistory.forEach(message => {
+            if (message.id === undefined || message.id === null || message.bot === undefined || message.bot === null || message.content === undefined || message.content === null || message.user === undefined || message.user === null || message.time === undefined || message.time === null)   {
+                console.log('Error loading messages.');
+                return;
+            }
+            if (message.bot === true){
+                addOldMessages(message.content);
+            }
+            else if (message.bot === false){
+                addOldMessages(message.content, true);
+            }
+        });
+        writeToNumber();
+    }
+}
+window.addEventListener('beforeunload', function(event) {
+    if (numberOfMessages % 2 === 0){
+        numberOfMessages--;
+        chatHistory.pop();
+        writeToNumber();
+        removeLatestMsg();
+        changeMessages();
+    }
+});
