@@ -76,7 +76,6 @@ function getValue(){
             showErrorMessage('Error 504. Please try again later.');
         }
         else {
-            console.log(data);
             chatHistory = JSON.parse(data.json);
             if (chatHistory.empty === true){
                 chatHistory = [];
