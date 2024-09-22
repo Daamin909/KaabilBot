@@ -1,5 +1,6 @@
 userInput.disabled = true;
 loading_screen.style.display = 'flex';
+var messagesCheck, numberCheck, x;
 checkFilePaths();
 function checkFilePaths(){
     fetch('http://127.0.0.1:5000/check', {
@@ -7,9 +8,12 @@ function checkFilePaths(){
     })
     .then(response => response.json())
     .then(data => {
-        var x = data
+        x = data;
         if (!data.messages){
             createFile('messages');
+        }
+        else{
+            messagesCheck = true;
         }
         if (!data.audio){
             createFile('audio');
@@ -17,9 +21,14 @@ function checkFilePaths(){
         if (!data.number){
             createFile('number')
         }
+        else{
+            numberCheck = true;
+        }
     })
     .then(() => {
-        getValue();
+        if (messagesCheck && numberCheck){
+            getValue();
+        }
     })
     .then(() => {
 
@@ -41,6 +50,17 @@ function createFile(type){
         if (!data.bool){
             showErrorMessage('Error 504. Please try again later.');
         }
+        else{
+            if (type === 'messages'){
+                messagesCheck = true;
+            }
+            else if (type === 'number'){
+                numberCheck = true;
+            }
+            if (messagesCheck && numberCheck){
+                getValue();
+            }
+        }
     })
     .catch((error) => {
         showErrorMessage('Error 504. Please try again later.');
@@ -56,6 +76,7 @@ function getValue(){
             showErrorMessage('Error 504. Please try again later.');
         }
         else {
+            console.log(data);
             chatHistory = JSON.parse(data.json);
             if (chatHistory.empty === true){
                 chatHistory = [];
@@ -100,6 +121,9 @@ function loadOldMessages(){
         const intro = `<h3> Welcome to KaabilBot™! </h3>
                <strong>KaabilBot</strong> is here to assist you with any query or task you have. True to its name, this bot is designed to handle a wide range of requests efficiently.`;
         addIntroMessage(intro);
+        checkIncomplete();
+        loading_screen.style.display = 'none';
+        userInput.disabled = false;
     }
     else if(chatHistory.length === 1){
         const message = chatHistory[0].special;

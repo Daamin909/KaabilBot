@@ -45,13 +45,13 @@ def createFiles():
             m.createNumberFilePath()
             return jsonify({'bool': True})
     except:
-        return jsonify({'bool', False})
+        return jsonify({'bool': False})
 
 @app.route('/read', methods=['POST'])
 def read():
     chatHistory = m.readFile()
     if (chatHistory==False):
-        return jsonify({'json', 'error'})
+        return jsonify({'json': False})
     else:
         return jsonify({'json': f'{chatHistory}'})
     
@@ -59,7 +59,7 @@ def read():
 def rean():
     chatHistory = m.readNumberFile()
     if (chatHistory==False):
-        return {'json', 'error'}
+        return jsonify({'json': 'error'})
     else:
         return jsonify({'json': f'{chatHistory}'})
     

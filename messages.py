@@ -59,6 +59,7 @@ def readFile():
         with open(homePath+messagesFilePath, 'r') as f:
             return f.read()
     except Exception as e: 
+        print(e)
         return False
 def readNumberFile():
     try:
