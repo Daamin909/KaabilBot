@@ -1,70 +1,79 @@
 import os
-from os import path
-import json
+from pymongo import MongoClient
+from dotenv import load_dotenv
+import logging
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-homePath = os.path.expanduser("~")
-messagesFilePath= "/AppData/Local/Programs/KaabilBot/chat/messages.json"
-numberFilePath= "/AppData/Local/Programs/KaabilBot/chat/number.json"
-audioFilePath= "/AppData/Local/Programs/KaabilBot/audio"
+load_dotenv()
+try:
+    client = MongoClient(os.getenv("MONGO_URL"))
+    db = client["kaabilbot"]
+    messages_collection = db["messages"]
+    number_collection = db["number"]
+    client.admin.command('ismaster')
+    logger.info("Successfully connected to MongoDB")
+except Exception as e:
+    logger.error(f"Failed to connect to MongoDB: {e}")
+    raise
 
-def numberExist():
-    # true if number json file exists
-    return path.exists(homePath+numberFilePath)
-def messagesExist():
-    # true if json file exists
-    return path.exists(homePath+messagesFilePath)
-def audioExist():
-    # true if audio folder exists
-    return path.exists(homePath+audioFilePath)
-def createNumberFilePath():
+def messages_exist():
     try:
-        os.makedirs(path.dirname(homePath+numberFilePath), exist_ok=True)
-        with open(homePath+numberFilePath, 'w') as f:
-            f.write('{ "number_of_messages": 0 }')
-        return True
-    except:
-        return False
-def createMessageFilePath():
-    try:
-        os.makedirs(path.dirname(homePath+messagesFilePath), exist_ok=True)
-        with open(homePath+messagesFilePath, 'w') as f:
-            f.write('{ "empty": true }')
-        return True
-    except:
-        return False   
-def createAudioFilePath():
-    try:
-        os.makedirs(path.dirname(homePath+audioFilePath+'/audio.mp3'), exist_ok=True)
-        return True
-    except:
-        return False
-def write(data):
-    try:
-        with open(homePath+messagesFilePath, 'w') as f:
-            data_string = json.dumps(data, indent=4)
-            f.write(data_string)
-        return True
-    except:
-        return False
-def writeNumber(number):
-    try:
-        with open(homePath+numberFilePath, 'w') as f:
-            f.write('{ "number_of_messages": '+str(number)+' }')
-        return True
-    except:
-        return False
-def readFile():
-    try:
-        with open(homePath+messagesFilePath, 'r') as f:
-            return f.read()
-    except Exception as e: 
-        print(e)
-        return False
-def readNumberFile():
-    try:
-        with open(homePath+numberFilePath, 'r') as f:
-            return f.read()
+        return messages_collection.count_documents({}) > 0
     except Exception as e:
-        print(e)
+        logger.error(f"Error checking messages: {e}")
+        return False
+
+def number_exist():
+    try:
+        return number_collection.count_documents({}) > 0
+    except Exception as e:
+        logger.error(f"Error checking number: {e}")
+        return False
+
+def create_message_document():
+    try:
+        messages_collection.insert_one({"empty": True})
+        return True
+    except Exception as e:
+        logger.error(f"Error creating message document: {e}")
+        return False
+
+def create_number_document():
+    try:
+        number_collection.insert_one({"number_of_messages": 0})
+        return True
+    except Exception as e:
+        logger.error(f"Error creating number document: {e}")
+        return False
+
+def write_messages(data):
+    try:
+        messages_collection.replace_one({}, data, upsert=True)
+        return True
+    except Exception as e:
+        logger.error(f"Error writing messages: {e}")
+        return False
+
+def write_number(number):
+    try:
+        number_collection.replace_one({}, {"number_of_messages": number}, upsert=True)
+        return True
+    except Exception as e:
+        logger.error(f"Error writing number: {e}")
+        return False
+
+def read_messages():
+    try:
+        return messages_collection.find_one({}, {"_id": 0})
+    except Exception as e:
+        logger.error(f"Error reading messages: {e}")
+        return False
+
+def read_number():
+    try:
+        return number_collection.find_one({}, {"_id": 0})
+    except Exception as e:
+        logger.error(f"Error reading number: {e}")
         return False

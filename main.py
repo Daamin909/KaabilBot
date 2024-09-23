@@ -4,7 +4,6 @@ import wave
 import pyaudio
 from dotenv import load_dotenv
 import markdown2 as m2
-from messages import homePath, audioFilePath
 import os
 from groq import Groq
 
@@ -42,8 +41,8 @@ def recorder(filename, duration=5, sample_rate=44100, chunk=1024, channels=1):
     wf.setframerate(sample_rate)
     wf.writeframes(b''.join(frames))
     wf.close()
-def audio_to_text(filename="audio.webm"):
-    AUDIO_FILE = homePath+audioFilePath+"/"+filename
+def audio_to_text(filename="temp_audio.webm"):
+    AUDIO_FILE = filename
     try:
         with open(AUDIO_FILE, "rb") as file:
             transcription = clientSTT.audio.transcriptions.create(
