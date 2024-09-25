@@ -13,19 +13,15 @@ except Exception as e:
 def messages_exist():
     try:
         return messages_collection.count_documents({}) > 0
-    except Exception as e:
-        print(e)
+    except:
         return False
-
 
 def create_message_document():
     try:
         messages_collection.insert_one({"data": []})
         return True
-    except Exception as e:
-        print(e)
+    except:
         return False
-
 
 def write_messages(data):
     try:
@@ -42,13 +38,12 @@ def write_messages(data):
         else:
             return False
 
-    except Exception as e:
+    except:
         return False
 
 def read_messages():
     try:
         result = messages_collection.find_one({}, {"_id": 0})
         return (result['data'])
-
     except:
         return False

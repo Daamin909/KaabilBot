@@ -10,9 +10,7 @@ CORS(app)
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    user_input = request.get_json()
-    response = get_response(user_input['prompt'])
-    return jsonify({'response': response})
+    return jsonify({'response': get_response(request.get_json()['prompt'])})
 
 @app.route('/speech', methods=['POST'])
 def speech():
@@ -31,7 +29,6 @@ def speech():
     except Exception as e:
         return jsonify(False)
 
-
 @app.route('/read', methods=['POST'])
 def read():
     messageData = m.read_messages()
@@ -39,7 +36,6 @@ def read():
         return jsonify(False)
     else:
         return json.dumps(messageData)
-
 
 @app.route('/check', methods=['POST'])
 def check():
@@ -59,7 +55,6 @@ def createFile():
 def write():
     data = request.get_json()
     return jsonify(m.write_messages(data))
-
 
 if __name__ == '__main__':
     app.run(debug=True)

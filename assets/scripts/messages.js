@@ -47,7 +47,6 @@ function getValue(){
             showErrorMessage('Error 504. Please try again later.');
         } 
         else {
-            console.log(data);
             chatHistory = data;
             numberOfMessages = chatHistory.length;
         }
