@@ -16,7 +16,7 @@ function checkFilePaths(){
             getValue();
         }
     })
-    .catch((error) => {
+    .catch(() => {
         showErrorMessage('Error 504. Please try again later.');
     });
 }
