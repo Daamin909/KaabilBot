@@ -6,70 +6,28 @@ const stopIcon = document.getElementById('stop-icon');
 const startIcon = document.getElementById('start-icon');
 const loading_screen = document.getElementById('loading-screen');
 stopIcon.style.display = 'none';
-setTimeout(() => {
-    document.querySelectorAll('.read-aloud-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            window.speechSynthesis.cancel();
-            const messageId = this.getAttribute('data-message-id');
-            const messageContent = document.querySelector(`.message[data-message-id="${messageId}"]`).textContent;
-            const speech = new SpeechSynthesisUtterance(messageContent);
-            speech.volume = 100;
-            speech.rate = 1;
-            speech.pitch = 1;
-            window.speechSynthesis.speak(speech);
-        });
-    });
-}, 1000);
+
 var chatHistory = [];
 var numberOfMessages = 0;
+var mediaRecorder;
+var audioChunks = [];
+var recording = false;
+document.addEventListener('DOMContentLoaded', () => {   
+    window.speechSynthesis.cancel();
+});
 function writeToMessages(format){
     chatHistory.push(format);
+    numberOfMessages=chatHistory.length;
     fetch('http://127.0.0.1:5000/write', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(chatHistory)
+        body: JSON.stringify(format)
     })
     .then(response => response.json())
     .then(data => {
-        if (!data.bool){
-            showErrorMessage('Error 504. Please try again later.');
-        }
-    })
-    .catch((error) => {
-        showErrorMessage('Error 504. Please try again later.');
-    });
-}
-function changeMessages(){
-    fetch('http://127.0.0.1:5000/write', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(chatHistory)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (!data.bool){
-            showErrorMessage('Error 504. Please try again later.');
-        }
-    })
-    .catch((error) => {
-        showErrorMessage('Error 504. Please try again later.');
-    });
-}
-function writeToNumber(){
-    fetch('http://127.0.0.1:5000/writn', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ number_of_messages: numberOfMessages })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (!data.bool){
+        if (!data){
             showErrorMessage('Error 504. Please try again later.');
         }
     })
@@ -83,11 +41,8 @@ function addMessage(content, userCheck = false) {
         "user": userCheck,
         "bot": !userCheck,
         "content": content,
-        "time": new Date().toLocaleString()
     }
-    numberOfMessages += 1;
     writeToMessages(format);
-    writeToNumber();
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message');
     messageDiv.classList.add(userCheck ? 'user-message' : 'bot-message');
@@ -116,11 +71,8 @@ function addIntroMessage(content) {
         "bot": true,
         "special": true,
         "content": content,
-        "time": new Date().toLocaleString()
     }
-    numberOfMessages = 1;
     writeToMessages(format);
-    writeToNumber();
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message');
     messageDiv.classList.add('bot-message');
@@ -225,12 +177,10 @@ function showErrorMessage(message) {
     completed.play();
     setTimeout(() => {
         messageBox.remove();
+        loading_screen.style.display = 'none';
+        userInput.disabled = false;
     }, 3000);
 }
-
-let mediaRecorder;
-let audioChunks = [];
-let recording = false;
 
 micButton.addEventListener('click', () => {
     if (recording) {
@@ -290,7 +240,7 @@ function startRecording() {
             })
             .then(response => response.json())
             .then(data => {
-                if (data.error) {
+                if (!data) {
                     showErrorMessage('Error 404. Please try again later.');
                     loading_screen.style.display = 'none';
                     userInput.disabled = false;
