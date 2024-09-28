@@ -90,7 +90,9 @@ form {
     pointer-events: none;
     transition: 0.3s;
 }
-
+#visible-signin, #visible-signup{
+    cursor: pointer;
+}
 .input-group input:focus  ~ label,
 .input-group input:valid ~ label {
     top: -20px;

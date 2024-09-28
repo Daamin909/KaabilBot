@@ -8,11 +8,11 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/chat', methods=['POST'])
+@app.route('/chat', methods=['GET'])
 def chat():
     return jsonify({'response': get_response(request.get_json()['prompt'])})
 
-@app.route('/speech', methods=['POST'])
+@app.route('/speech', methods=['GET'])
 def speech():
     if 'audio' not in request.files:
         return jsonify(False)
@@ -29,7 +29,7 @@ def speech():
     except Exception as e:
         return jsonify(False)
 
-@app.route('/read', methods=['POST'])
+@app.route('/read', methods=['GET'])
 def read():
     messageData = m.read_messages()
     if messageData is False:
@@ -37,21 +37,21 @@ def read():
     else:
         return json.dumps(messageData)
 
-@app.route('/check', methods=['POST'])
+@app.route('/check', methods=['GET'])
 def check():
     try:
         return jsonify(m.messages_exist())
     except:
         return jsonify(False)
 
-@app.route('/createFile', methods=['POST'])
+@app.route('/createFile', methods=['GET'])
 def createFile():
     try:
         return jsonify(m.create_message_document())
     except:
         return jsonify(False)
 
-@app.route('/write', methods=['POST'])
+@app.route('/write', methods=['GET'])
 def write():
     data = request.get_json()
     return jsonify(m.write_messages(data))

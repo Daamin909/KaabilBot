@@ -5,7 +5,7 @@ checkFilePaths();
 
 function checkFilePaths(){
     fetch('http://127.0.0.1:5000/check', {
-        method: 'POST'
+        method: 'GET'
     })
     .then(response => response.json())
     .then(data => {
@@ -22,7 +22,7 @@ function checkFilePaths(){
 }
 function createFile(){
     fetch('http://127.0.0.1:5000/createFile', {
-        method: 'POST',
+        method: 'GET',
     })
     .then(response => response.json())
     .then(data => {
@@ -39,7 +39,7 @@ function createFile(){
 }
 function getValue(){
     fetch('http://127.0.0.1:5000/read', {
-        method: 'POST',
+        method: 'GET',
     })
     .then(response => response .json())
     .then(data => {
