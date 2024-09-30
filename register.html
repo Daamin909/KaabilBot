@@ -8,12 +8,28 @@
         <link rel="stylesheet" href="assets/styles/register.css">
     </head>
     <body>
+        <div id="otpDialogOverlay" class="otp-overlay">
+            <div id="otpDialogBox" class="otp-dialog">
+                <h2 class="otp-title">
+                    <i class="fas fa-key"></i> Enter OTP
+                </h2>
+                <input type="text" id="otpInputField" class="otp-input" placeholder="Enter your OTP here" maxlength="6">
+                <div class="otp-button-container">
+                    <button id="otpCancelBtn" class="otp-btn otp-cancel-btn">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button id="otpProceedBtn" class="otp-btn otp-proceed-btn">
+                        <i class="fas fa-check"></i> Proceed
+                    </button>
+                </div>
+            </div>
+        </div>
         <div class="container">
             <div class="card">
                 <div class="card-inner">
                     <div class="card-front">
-                        <h2><i class="fas fa-sign-in-alt"></i></h2>
-                        <form id="signin-form">
+                        <h2 class="card-title"><i class="fas fa-sign-in-alt"></i></h2>
+                        <form id="signin-form" class="auth-form">
                             <div class="input-group">
                                 <input type="email" id="signin-email" required>
                                 <label for="signin-email">Email</label>
@@ -22,17 +38,17 @@
                             <div class="input-group">
                                 <input type="password" id="signin-password" required>
                                 <label for="signin-password">Password</label>
-                                <i class="fas fa-eye" id="visible-signin"></i>
+                                <i class="fas fa-eye visible-password" id="visible-signin"></i>
                             </div>
-                            <button type="submit">Sign In</button>
+                            <button type="submit" class="auth-button">Sign In</button>
                         </form>
-                        <div class="toggle">
-                            Don't have an account? <a href="#" onclick="toggleForm()">Sign Up</a>
+                        <div class="toggle-text">
+                            Don't have an account? <a href="#" class="toggle-link" onclick="toggleForm()">Sign Up</a>
                         </div>
                     </div>
                     <div class="card-back">
-                        <h2><i class="fas fa-user-plus"></i></h2>
-                        <form id="signup-form">
+                        <h2 class="card-title"><i class="fas fa-user-plus"></i></h2>
+                        <form id="signup-form" class="auth-form">
                             <div class="input-group">
                                 <input type="email" id="signup-email" required>
                                 <label for="signup-email">Email</label>
@@ -41,12 +57,12 @@
                             <div class="input-group">
                                 <input type="password" id="signup-password" required>
                                 <label for="signup-password">Password</label>
-                                <i class="fas fa-eye" id="visible-signup"></i>
+                                <i class="fas fa-eye visible-password" id="visible-signup"></i>
                             </div>
-                            <button type="submit">Sign Up</button>
+                            <button type="submit" class="auth-button">Sign Up</button>
                         </form>
-                        <div class="toggle">
-                            Already have an account? <a href="#" onclick="toggleForm()">Sign In</a>
+                        <div class="toggle-text">
+                            Already have an account? <a href="#" class="toggle-link" onclick="toggleForm()">Sign In</a>
                         </div>
                     </div>
                 </div>
@@ -54,4 +70,4 @@
         </div>
         <script src="assets/scripts/register.js"></script>
     </body>
-</html> 
+</html>

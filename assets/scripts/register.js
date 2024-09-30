@@ -35,18 +35,25 @@ document.getElementById('signup-form').addEventListener('submit', function(event
     const pass = checkPassword(password);
     const mail = checkEmail(email);
     if(pass[0] && mail){
+        console.log(1);
         signUp(email, password);
     }
     else if (!pass[0] && !mail) {
+        console.log(2);
         showErrorMessage('Invalid email and password');
     }
     else if(!mail){
+        console.log(3);
         showErrorMessage('Invalid email');
     }
     else if(!pass[0]){
+        console.log(4);
         pass[1] ? (pass[2] ? (pass[3] ? (pass[4] ? null: showErrorMessage('Password must contain atleast 1 special character')) : showErrorMessage('Password must contain atleast 1 number')) : showErrorMessage('Password must contain atleast 1 uppercase letter')) : showErrorMessage('Password must contain atleast 8 characters'); 
     }
-
+    else{
+        console.log(5);
+        console.log(pass, mail);    
+    }
 });
 document.getElementById('signin-form').addEventListener('submit', function(event) {
     event.preventDefault();
@@ -68,16 +75,8 @@ document.getElementById('signin-form').addEventListener('submit', function(event
     }
 });
 
+var showingOTP = false;
 
-document.querySelectorAll('input').forEach(input => {
-    input.addEventListener('focus', function() {
-        this.parentNode.style.transform = 'scale(1.05)';
-    });
-
-    input.addEventListener('blur', function() {
-        this.parentNode.style.transform = 'scale(1)';
-    });
-});
 
 const emailInput = document.getElementById('signup-email');
 const emailLabel = document.querySelector('label[for="signup-email"]');
@@ -167,24 +166,22 @@ document.getElementById('visible-signin').addEventListener('click', function() {
 });
 
 
-
-
 function checkEmail(email) {
     const emailTest = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailTest.test(email);
 }
 function checkPassword(password) {
-    const passwordTest = /.{8,}[A-Z]\d[!@#$%^&*(),.?":{}|<>]/.test(password);
     const length = /.{8,}/.test(password);
     const uppercase = /[A-Z]/.test(password);
     const number = /\d/.test(password);
     const specialCharacter = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const passwordTest = length && uppercase && number && specialCharacter;
     return [passwordTest, length, uppercase, number, specialCharacter];
 }
 
 function checkEmailUniqueness(email) {
     fetch('http://127.0.0.1:5000/check-email', {
-        method: 'GET',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -200,4 +197,37 @@ function signUp(email, password) {
         showErrorMessage('Email already exists');
         return;
     };
+    OpenUIforOTP();
+    fetch('http://127.0.0.1:5000/otp', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(email)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    });
+}
+function OpenUIforOTP() {
+    showingOTP = true;  
+    const dialogOverlay = document.getElementById('otpDialogOverlay');
+    const dialogBox = document.getElementById('otpDialogBox');
+    const cancelBtn = document.getElementById('otpCancelBtn');
+    const proceedBtn = document.getElementById('otpProceedBtn');
+    const otpInput = document.getElementById('otpInputField');
+    dialogOverlay.classList.add('active');
+    cancelBtn.addEventListener('click', closeUIforOTP());
+    // add the appropriate handler proceedBtn.addEventListener('click', handleProceed);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && showingOTP) {
+            closeUIforOTP();
+        }
+    });
+}
+function closeUIforOTP() {
+    const dialogOverlay = document.getElementById('otpDialogOverlay');
+    dialogOverlay.classList.remove('active');
+    showingOTP = false;
 }

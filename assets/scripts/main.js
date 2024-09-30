@@ -19,7 +19,7 @@ function writeToMessages(format){
     chatHistory.push(format);
     numberOfMessages=chatHistory.length;
     fetch('http://127.0.0.1:5000/write', {
-        method: 'GET',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -134,7 +134,7 @@ function get_response(message) {
     userInput.disabled = true;
     loading_screen.style.display = 'flex';
     fetch('http://127.0.0.1:5000/chat', {
-        method: 'GET',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -235,7 +235,7 @@ function startRecording() {
             const formData = new FormData();
             formData.append('audio', audioBlob, 'recording.webm');
             fetch('http://127.0.0.1:5000/speech', {
-                method: 'GET',
+                method: 'POST',
                 body: formData
             })
             .then(response => response.json())
