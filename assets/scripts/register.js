@@ -1,4 +1,8 @@
-function showErrorMessage(message) {
+const loading_screen = document.getElementById('loading-screen');
+document.addEventListener('DOMContentLoaded', function() {
+    loading_screen.style.display = 'none';
+});
+function showErrorMessage(message, size=false) {
     if (document.querySelector('.error-message')) {
         for (let i = 0; i < document.querySelectorAll('.error-message').length; i++) {
             document.querySelectorAll('.error-message')[i].remove();
@@ -15,8 +19,8 @@ function showErrorMessage(message) {
     messageBox.style.color = "white";
     messageBox.style.padding = "10px 20px";
     messageBox.style.borderRadius = "5px";
-    messageBox.style.zIndex = "10000000";
-    messageBox.style.fontSize = "12px";
+    messageBox.style.zIndex = "100000000000000000000000000000000000";
+    messageBox.style.fontSize = size ? "20px" : "12px";
     document.body.appendChild(messageBox);
     const completed = new Audio('assets/sound-effects/error-message.mp3'); 
     completed.play();
@@ -35,23 +39,18 @@ document.getElementById('signup-form').addEventListener('submit', function(event
     const pass = checkPassword(password);
     const mail = checkEmail(email);
     if(pass[0] && mail){
-        console.log(1);
         signUp(email, password);
     }
     else if (!pass[0] && !mail) {
-        console.log(2);
         showErrorMessage('Invalid email and password');
     }
     else if(!mail){
-        console.log(3);
         showErrorMessage('Invalid email');
     }
     else if(!pass[0]){
-        console.log(4);
         pass[1] ? (pass[2] ? (pass[3] ? (pass[4] ? null: showErrorMessage('Password must contain atleast 1 special character')) : showErrorMessage('Password must contain atleast 1 number')) : showErrorMessage('Password must contain atleast 1 uppercase letter')) : showErrorMessage('Password must contain atleast 8 characters'); 
     }
     else{
-        console.log(5);
         console.log(pass, mail);    
     }
 });
@@ -76,7 +75,7 @@ document.getElementById('signin-form').addEventListener('submit', function(event
 });
 
 var showingOTP = false;
-
+var credentials = [];
 
 const emailInput = document.getElementById('signup-email');
 const emailLabel = document.querySelector('label[for="signup-email"]');
@@ -179,7 +178,10 @@ function checkPassword(password) {
     return [passwordTest, length, uppercase, number, specialCharacter];
 }
 
-function checkEmailUniqueness(email) {
+function signUp(email, password) {
+    credentials = [];
+    const submitBtn = document.getElementById('signup-submit');
+    submitBtn.disabled = true;
     fetch('http://127.0.0.1:5000/check-email', {
         method: 'POST',
         headers: {
@@ -189,37 +191,63 @@ function checkEmailUniqueness(email) {
     })
     .then(response => response.json())
     .then(data => {
-        return data;
-    });
-}
-function signUp(email, password) {
-    checkEmailUniqueness(email) ? null : () => {
-        showErrorMessage('Email already exists');
-        return;
-    };
-    OpenUIforOTP();
-    fetch('http://127.0.0.1:5000/otp', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(email)
+        submitBtn.disabled = false;
+        data ? null: () => {
+            showErrorMessage('Email already exists');
+            return;
+        };
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
+    .then(() => {
+        loading_screen.style.display = 'flex';
+        fetch('http://127.0.0.1:5000/otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(email, password)
+        })
+        .then(response => response.json())
+        .then(data => {
+            loading_screen.style.display = 'none';
+            console.log(data);
+            if (data) {
+                OpenUIforOTP();
+                credentials = [email, password];
+            }
+            else {
+                showErrorMessage('An error occurred', true);
+            }
+            /*data ? () => {
+                OpenUIforOTP();
+                credentials = [email, password];
+            }: showErrorMessage('An error occurred', true);*/
+        })
+        .catch(error => {
+            loading_screen.style.display = 'none';
+            console.error('Error:', error);
+            showErrorMessage('An error occurred, 2', true);
+            return;
+        });
+    })
+    .catch((error) => {
+        submitBtn.disabled = false;
+        showErrorMessage('An error occurred');
+        return;
     });
+
 }
 function OpenUIforOTP() {
     showingOTP = true;  
-    const dialogOverlay = document.getElementById('otpDialogOverlay');
-    const dialogBox = document.getElementById('otpDialogBox');
-    const cancelBtn = document.getElementById('otpCancelBtn');
+    console.log("hello");
+    document.getElementById('otpDialogOverlay').style.display = 'flex';
     const proceedBtn = document.getElementById('otpProceedBtn');
     const otpInput = document.getElementById('otpInputField');
-    dialogOverlay.classList.add('active');
-    cancelBtn.addEventListener('click', closeUIforOTP());
-    // add the appropriate handler proceedBtn.addEventListener('click', handleProceed);
+    proceedBtn.addEventListener('click', () => {
+        const otp = otpInput.value;
+        if (otp.length === 6) {
+            console.log('to be continued');
+        }
+    });
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && showingOTP) {
             closeUIforOTP();
@@ -227,7 +255,18 @@ function OpenUIforOTP() {
     });
 }
 function closeUIforOTP() {
-    const dialogOverlay = document.getElementById('otpDialogOverlay');
-    dialogOverlay.classList.remove('active');
+    document.getElementById('otpDialogOverlay').style.display = 'none';
     showingOTP = false;
 }
+
+document.getElementById('otp-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const otp = document.getElementById('otpInputField').value; 
+    if (otp.length != 6) {
+        showErrorMessage('Enter a 6 digit OTP');
+    }
+});
+document.getElementById('otpInputField').addEventListener('input', function(event) {
+    this.value = this.value.replace(/[^0-9]/g, '')
+});
+    

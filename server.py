@@ -64,6 +64,8 @@ def check_email():
 @app.route('/otp', methods=['POST'])
 def otp():
     email = request.get_json()
-    return jsonify(a.send_otp(email))
+    x = a.send_otp(email)
+    print(x)
+    return jsonify(x)
 if __name__ == '__main__':
     app.run(debug=True)

@@ -18,16 +18,17 @@ try:
 except Exception as e:
     print(e)
 
-def remove_otp(email):
+def remove_otp(email, otp):
     try:
         data = otp_collection.find_one()
         for i in range(len(data["otpstorage"])):
             if email in data["otpstorage"][i]:
-                data["otpstorage"].pop(i)
-                break
-        otp_collection.delete_many({})
-        otp_collection.insert_one(data)
-        print("OTP removed")
+                if data["otpstorage"][i][email] == otp:
+                    data["otpstorage"].pop(i)
+                    otp_collection.delete_many({})
+                    otp_collection.insert_one(data)
+                    print("OTP removed")
+                    break
     except Exception as e:
         print(e)
 
@@ -47,7 +48,7 @@ def generate_otp(email):
             data["otpstorage"].append({email: otp})
         otp_collection.delete_many({})
         otp_collection.insert_one(data)
-        threading.Timer(15, remove_otp, args=[email]).start()
+        threading.Timer(60*5, remove_otp, args=[email, otp]).start()
     except Exception as e:
         print(e)
     return otp
