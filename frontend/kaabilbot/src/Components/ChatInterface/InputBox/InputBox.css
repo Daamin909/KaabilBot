@@ -1,0 +1,70 @@
+.input-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--darkest);
+}
+
+#user-input {
+  font-size: 22px;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 5px;
+  background-color: var(--dark);
+  width: 45vw;
+  color: var(--lightest);
+  border: 2px solid transparent;
+}
+
+#user-input:focus {
+  border: 2px solid var(--light);
+  outline: none;
+}
+.button-input {
+  font-size: 22px;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 5px;
+  border: none;
+  border-bottom: 3px solid var(--light);
+  background-color: var(--dark);
+  color: var(--lightest);
+  transition: all 0.3s ease-in-out;
+}
+.front {
+  transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+.pushable:hover .front {
+  transform: translateY(-6px);
+  transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+}
+.pushable {
+  background-color: #124e666b;
+  border: none;
+  border-radius: 12px;
+  padding: 0;
+  cursor: pointer;
+}
+.front {
+  background-color: var(--blue);
+  display: block;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  color: white;
+  transform: translateY(-4px);
+}
+
+.pushable:active .front {
+  transform: translateY(-2px);
+}
+
+.pushable:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.pushable:active .front {
+  transform: translateY(-2px);
+  transition: transform 34ms;
+}
