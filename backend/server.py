@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from main import audio_to_text, get_response
 import messages as m
-import accounts as a
+import accounts as acc
 import json
 import os
 
@@ -59,12 +59,12 @@ def write():
 
 @app.route('/check-email', methods=['POST'])
 def check_email():
-    return jsonify(a.check_email("to be done later"))
+    return jsonify(acc.check_email("to be done later"))
 
 @app.route('/otp', methods=['POST'])
 def otp():
     email = request.get_json()
-    x = a.send_otp(email)
+    x = acc.send_otp(email)
     print(x)
     return jsonify(x)
 if __name__ == '__main__':
