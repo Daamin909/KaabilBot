@@ -12,9 +12,9 @@ const InputBox = () => {
       <input type="text" id="user-input" placeholder="Message KaabilBot" />
       <button className="button-input pushable" id="mic-button">
         <span className="front">
-          <a id="start-icon">
+          {/* <a id="start-icon">
             <FontAwesomeIcon icon={faMicrophone} />
-          </a>
+          </a> */}
           <a id="stop-icon">
             <FontAwesomeIcon icon={faCircleStop} />
           </a>

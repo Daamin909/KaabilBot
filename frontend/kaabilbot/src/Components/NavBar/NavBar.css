@@ -8,6 +8,8 @@
   padding: 10px;
   background-color: var(--darkest);
   color: var(--lightest);
+  position: relative;
+  flex-shrink: 0;
   box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
 }
 .branding {

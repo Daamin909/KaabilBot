@@ -2,29 +2,40 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--darkest);
+  position: relative;
+  flex-shrink: 0;
+  padding: 15px;
+  padding-bottom: 18px;
+  background-color: var(--light);
+  width: 55vw;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
 }
 
 #user-input {
-  font-size: 22px;
-  border-radius: 10px;
+  font-size: 18px;
   padding: 10px;
-  margin: 5px;
-  background-color: var(--dark);
+  margin-right: 5px;
+  background-color: transparent;
+  border: 3px solid transparent;
+  border-bottom: 3px solid var(--blue);
   width: 45vw;
-  color: var(--lightest);
-  border: 2px solid transparent;
+  color: var(--darkest);
 }
-
+#user-input::placeholder {
+  color: #191919a9;
+}
 #user-input:focus {
-  border: 2px solid var(--light);
+  border: 3px solid var(--blue);
+  border-radius: 10px;
   outline: none;
 }
 .button-input {
   font-size: 22px;
   border-radius: 10px;
   padding: 10px;
-  margin: 5px;
+  width: 44px !important;
+  margin-right: 5px;
   border: none;
   border-bottom: 3px solid var(--light);
   background-color: var(--dark);
