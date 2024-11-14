@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
+import { Axios } from "axios";
 import "./ChatBox.css";
 import Message from "../Message/Message";
-const ChatBox = ({ messages }) => {
+import fetchMessages from "../../Scripts/fetchMessages";
+const ChatBox = () => {
+  const [messages, setMessages] = useState([]);
+  useEffect(() => fetchMessages(setMessages), []);
   return (
     <div className="chat-box">
       {...messages.map((message) => {
