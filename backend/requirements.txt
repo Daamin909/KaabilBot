@@ -1,6 +1,6 @@
 flask==3.0.3
 flask_cors==3.0.10  
 pymongo==4.6.0
-dotenv==1.0.0
+python-dotenv==1.0.1
 groq==0.6.1
 markdown2==2.4.10
