@@ -1,17 +1,26 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from main import audio_to_text, get_response
-import messages_old as m
+from main import audio_to_text
+import messages as m
 import accounts as acc
-import json
 import os
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/api/get-messages', methods=['POST'])
-def get_messages():
-    return jsonify({'response': get_response(request.get_json()['prompt'])})
+@app.route('/api/fetch-messages', methods=['POST'])
+def fetchMessages():
+    return jsonify(m.fetch_messages())
+
+@app.route('/api/write-messages', methods=['POST'])
+def writeMessages():
+    data = request.get_json()['data']
+    return jsonify(m.write_messages(data))
+
+@app.route('/api/get-response', methods=['POST'])
+def getResponse():
+    message = request.get_json()['message']
+    return jsonify( m.get_response(message))
 
 @app.route('/api/speech', methods=['POST'])
 def speech():
@@ -30,33 +39,6 @@ def speech():
     except Exception as e:
         return jsonify(False)
 
-@app.route('/api/read', methods=['POST'])
-def read():
-    messageData = m.read_messages()
-    if messageData is False:
-        return jsonify(False)
-    else:
-        return json.dumps(messageData)
-
-@app.route('/api/check', methods=['POST'])
-def check():
-    try:
-        return jsonify(m.messages_exist())
-    except:
-        return jsonify(False)
-
-@app.route('/api/createFile', methods=['POST'])
-def createFile():
-    try:
-        return jsonify(m.create_message_document())
-    except:
-        return jsonify(False)
-
-@app.route('/api/write', methods=['POST'])
-def write():
-    data = request.get_json()
-    return jsonify(m.write_messages(data))
-
 @app.route('/api/check-email', methods=['POST'])
 def check_email():
     return jsonify(acc.check_email("to be done later"))
@@ -67,5 +49,7 @@ def otp():
     x = acc.send_otp(email)
     print(x)
     return jsonify(x)
+
+
 if __name__ == '__main__':
     app.run(debug=True)

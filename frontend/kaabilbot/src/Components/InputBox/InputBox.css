@@ -5,11 +5,30 @@
   position: relative;
   flex-shrink: 0;
   padding: 15px;
+  height: 7vh;
+  margin: 10px;
   padding-bottom: 18px;
   background-color: var(--light);
   width: 55vw;
-  border-top-right-radius: 20px;
-  border-top-left-radius: 20px;
+  border-radius: 20px;
+  animation: float 10s ease-in-out infinite;
+}
+@keyframes float {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(5px, -5px);
+  }
+  50% {
+    transform: translate(0, -5px);
+  }
+  75% {
+    transform: translate(-5px, -5px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
 }
 
 #user-input {
