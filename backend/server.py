@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from main import audio_to_text
+# from main import audio_to_text
 import messages as m
-import accounts as acc
+# import accounts as acc
 import os
 
 app = Flask(__name__)
@@ -52,4 +52,4 @@ def otp():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)
