@@ -34,11 +34,13 @@
   font-family: "Helvetica", sans-serif;
   padding: 2px;
 }
-.message-content p{
+.message-content p {
   display: inline-block;
   margin: 0;
 }
-
+.message-content > p > a {
+  color: var(--light);
+}
 .message-content::-webkit-scrollbar {
   border-radius: 11px;
   width: 3px;
