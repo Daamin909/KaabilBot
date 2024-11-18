@@ -1,5 +1,6 @@
 import client from "./../Utils/apiClient";
 import writeMessages from "./writeMessages";
+import { showErrorMessage } from "./speechToText";
 
 const handleInput = async (input, setMessages, messages) => {
   const userMessage = {
@@ -20,7 +21,7 @@ const handleInput = async (input, setMessages, messages) => {
   writeMessages([...messages, userMessage, botMessage]);
 };
 
-const getCurrentTime = () => {
+export const getCurrentTime = () => {
   const now = new Date();
   let hours = now.getHours();
   const minutes = now.getMinutes();
@@ -34,7 +35,11 @@ const getCurrentTime = () => {
 export default handleInput;
 
 const getResponse = async (input) => {
-  const resp = await client.post("/api/get-response", { message: input });
-  const reply = resp.data;
-  return reply;
+  try {
+    const resp = await client.post("/api/get-response", { message: input });
+    const reply = resp.data;
+    return reply;
+  } catch (err) {
+    showErrorMessage(`404" ${err}`);
+  }
 };

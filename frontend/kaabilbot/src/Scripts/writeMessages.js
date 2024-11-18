@@ -1,7 +1,12 @@
 import client from "../Utils/apiClient";
+import { showErrorMessage } from "./speechToText";
 
 const writeMessages = (messages) => {
-  client.post("/api/write-messages", { data: messages }).then((resp) => {});
+  try {
+    client.post("/api/write-messages", { data: messages }).then((resp) => {});
+  } catch (err) {
+    showErrorMessage(`404: ${err}`);
+  }
 };
 
 export default writeMessages;

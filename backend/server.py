@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-# from main import audio_to_text
+from main import audio_to_text
 import messages as m
 # import accounts as acc
 import os
@@ -22,7 +22,7 @@ def getResponse():
     message = request.get_json()['message']
     return jsonify( m.get_response(message))
 
-@app.route('/api/speech', methods=['POST'])
+@app.route('/api/speech-to-text', methods=['POST'])
 def speech():
     if 'audio' not in request.files:
         return jsonify(False)
@@ -34,8 +34,8 @@ def speech():
         os.remove(audio_file_path)  
         if userContent == False:
             return jsonify(False)
-        botContent = get_response(userContent)
-        return jsonify({'response': botContent, 'requestPrompt': userContent})
+        botContent = m.get_response(userContent)
+        return jsonify({'bot': botContent, 'user': userContent})
     except Exception as e:
         return jsonify(False)
 

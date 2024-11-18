@@ -28,6 +28,7 @@ def audio_to_text(filename="temp_audio.webm"):
                 response_format="verbose_json",
             )
         return transcription.text
-    except:
+    except Exception as e:
+        print(e)
         return False
     
