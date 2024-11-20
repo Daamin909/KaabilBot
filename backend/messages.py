@@ -44,8 +44,7 @@ def get_response(input):
             info = {"role": "assistant", "content": md(single_message['content'])}
         else:
             info = {"role": single_message['sender'], "content": md(single_message['content'])}
-            
-    messages.append(info)
+        messages.append(info)
     client = Groq(api_key=os.getenv("API_KEY_LLM"))
     response = client.chat.completions.create(
         model="llama-3.1-70b-versatile",
