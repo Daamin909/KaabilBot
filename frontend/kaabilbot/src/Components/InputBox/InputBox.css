@@ -4,15 +4,16 @@
   align-items: center;
   position: relative;
   flex-shrink: 1;
-  padding: 20px 10px;
-  height: 5vh;
-  margin: 10px;
-  padding-bottom: 18px;
+  padding: 25px 10px;
+  height: 3vh;
+  margin: 0 10px 10px;
   background-color: var(--light);
-  width: 45vw;
+  width: fit-content;
   border-radius: 20px;
+  transform: scale(0.1);
   animation: float 10s ease-in-out infinite;
 }
+
 @keyframes float {
   0% {
     transform: translate(0, 0);
@@ -38,7 +39,7 @@
   background-color: transparent;
   border: 3px solid transparent;
   border-bottom: 3px solid var(--blue);
-  width: 35vw;
+  width: 30vw;
   color: var(--darkest);
 }
 #user-input::placeholder {
