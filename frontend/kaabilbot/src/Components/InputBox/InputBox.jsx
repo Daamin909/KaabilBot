@@ -11,8 +11,8 @@ import handleInput from "../../Scripts/handleInput";
 import speechToText, { showErrorMessage } from "../../Scripts/speechToText";
 
 const InputBox = ({ setMessages, messages }) => {
-  const mediaRecorderRef = useRef(null); // useRef to store mediaRecorder
-  const audioChunks = useRef([]); // useRef to store audio chunks persistently
+  const mediaRecorderRef = useRef(null);
+  const audioChunks = useRef([]);
   const [inputValue, setInputValue] = useState("");
   const [isRecording, setIsRecording] = useState(false);
 

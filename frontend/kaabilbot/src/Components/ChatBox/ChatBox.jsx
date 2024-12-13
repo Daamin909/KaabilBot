@@ -2,9 +2,9 @@ import React from "react";
 
 import "./ChatBox.css";
 import Message from "../Message/Message";
-const ChatBox = ({ messages }) => {
+const ChatBox = ({ messages, scrollRef }) => {
   return (
-    <div className="chat-box">
+    <div className="chat-box" ref={scrollRef}>
       {messages &&
         messages.map((message) => {
           return (
