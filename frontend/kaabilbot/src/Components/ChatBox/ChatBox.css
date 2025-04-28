@@ -1,8 +1,0 @@
-.chat-box {
-  flex-grow: 1;
-  width: 60vw;
-  height: 40vh;
-  overflow: auto;
-  padding: 10px;
-  margin: 10px;
-}
